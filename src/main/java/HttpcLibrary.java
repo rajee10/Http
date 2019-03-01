@@ -127,7 +127,7 @@ public class HttpcLibrary {
                 if (num > 0) {
 
                     byteBufferRead.flip();
-                    server.write(byteBufferRead);
+                    //server.write(byteBufferRead);
                     byteBufferRead.clear();
                 }
             }

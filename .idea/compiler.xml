@@ -9,5 +9,8 @@
         <module name="Http" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="Http" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>

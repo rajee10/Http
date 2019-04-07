@@ -32,18 +32,6 @@ Run httpc.jar using:
 
 ---------------------
 
-cd C:\Users\Laxman\Desktop\LA3_Router\router\windows
-
-router
-
-router --port=3000 --drop-rate=0.2 --max-delay=10ms --seed=1
-
-
-cd C:\Users\Laxman\Desktop\HTTPClient\target
-
 java -cp httpfs.jar httpfs --p 8007
 
-cd C:\Users\Laxman\Desktop\HTTPClient\target
-
-java -cp httpfs.jar httpc get "http://localhost:8007/foo" -v
-java -cp httpfs.jar httpc post "http://localhost:8007/fileDoesNotExist" -d "Overwriting File" -v
+router --port=3000 --drop-rate=0.2 --max-delay=10ms --seed=1

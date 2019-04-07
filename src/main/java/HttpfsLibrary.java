@@ -54,7 +54,6 @@ public class HttpfsLibrary {
                 packet = Packet.fromBuffer(buf);
                 buf.flip();
 
-                System.out.println("olla" + packet.getType());
                 if(packet.getSequenceNumber() == (sequenceNumberValue+1L)){
                     sequenceNumberValue+=1;
 
@@ -98,8 +97,6 @@ public class HttpfsLibrary {
         //request[1] = /FileName?
         String request[] = header.split("\r\n")[0].split(" ");
         String method = (request.length>0? request[0] : "");
-
-        System.out.println(method +"2");
 
         if(method.equalsIgnoreCase("get")){
 
@@ -238,7 +235,6 @@ public class HttpfsLibrary {
     }
 
     public void threeWayHandshake(DatagramChannel socket, String dir) {
-        System.out.println("HERERERER");
 
         try (DatagramChannel client = socket) {
             ByteBuffer buf = ByteBuffer
@@ -303,7 +299,6 @@ public class HttpfsLibrary {
     }
 
     public void selectiveRepeat(DatagramChannel socket, String dir, Packet pack, SocketAddress route, String respon) {
-        System.out.println("selectiveRepeat");
 
         try (DatagramChannel client = socket) {
             ByteBuffer buf = ByteBuffer
@@ -337,15 +332,12 @@ public class HttpfsLibrary {
                 timer.schedule( new resendPacket(socket, dir, packet, router, response), 1000);
 
                 while(true){
-                    System.out.println("selectiveRepeat 1");
                     buf.clear();
                     client.receive(buf);
                     buf.flip();
                     packet = Packet.fromBuffer(buf);
                     buf.flip();
-                    System.out.println(packet.getType() + " : " + (packet.getSequenceNumber() == sequenceNumberValue));
                     if(packet.getType() == 1 && packet.getSequenceNumber() == sequenceNumberValue){
-                        System.out.println("true");
                         buf.clear();
                         timer.cancel();
                         break;
@@ -378,7 +370,6 @@ public class HttpfsLibrary {
         }
 
         public void run() {
-            System.out.println("Time's up!");
             selectiveRepeat(socket, dir, packet, router, response);
         }
     }
@@ -394,7 +385,6 @@ public class HttpfsLibrary {
         }
 
         public void run() {
-            System.out.println("Time's up 3!");
             threeWayHandshake(socket, dir);
         }
     }
@@ -416,22 +406,4 @@ public class HttpfsLibrary {
         }
         return response;
     }
-
-    class MyThread extends Thread {
-
-        private DatagramChannel socket;
-        private String dir;
-
-        MyThread(DatagramChannel socket, String dir){
-            this.socket = socket;
-            this.dir = dir;
-        }
-
-        public void run() {
-            threeWayHandshake(socket, dir);
-        }
-    }
-
-
-
 }

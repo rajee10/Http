@@ -1,8 +1,6 @@
 import java.net.URI;
 import java.net.SocketAddress;
 import java.net.InetSocketAddress;
-import java.nio.channels.SocketChannel;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -15,6 +13,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.util.*;
 import static java.nio.channels.SelectionKey.OP_READ;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class HttpcLibrary {
 
@@ -134,7 +133,8 @@ public class HttpcLibrary {
             // ByteBuffer byteBufferRead = ByteBuffer.allocate(1024*1024);
 
             // String temp[] = utf8.decode(response).toString().split("\\r\\n\\r\\n");
-            String temp[] = response.getPayload().toString().split("\\r\\n\\r\\n");
+            String payload = new String(response.getPayload(), UTF_8);
+            String temp[] = payload.split("\\r\\n\\r\\n");
 
             responseHeader = temp[0];
             responseBody = temp[1];
@@ -293,8 +293,6 @@ public class HttpcLibrary {
             keys.clear();
 
             if(response.getType() == 3){
-                System.out.println(response.getType());
-
                 Packet packet2 = new Packet.Builder()
                         .setType(1)
                         .setPortNumber(serverAddr.getPort())
@@ -313,8 +311,6 @@ public class HttpcLibrary {
     }
 
     public Packet runClient(SocketAddress routerAddr, InetSocketAddress serverAddr, String request, int type, long sequenceNumber) throws IOException {
-        System.out.println("runClient");
-
         Packet response = null;
 
         try(DatagramChannel channel = DatagramChannel.open()){

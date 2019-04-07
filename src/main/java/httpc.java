@@ -6,6 +6,8 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.net.SocketAddress;
+import java.net.InetSocketAddress;
 
 public class httpc {
 
@@ -28,6 +30,11 @@ public class httpc {
         parser.accepts("f", "Associate the body of the HTTP Request with the data from a given text file.").availableUnless("d").withRequiredArg();
         parser.accepts("r", "Allow your HTTP client to follow the first request with another one to new URL.").withOptionalArg();
         parser.accepts("o", "To write the body of the response to the specified file instead of the console").withRequiredArg();
+
+        parser.accepts("router-host", "Router hostname").withOptionalArg().defaultsTo("localhost");
+        parser.accepts("router-port", "Router port number").withOptionalArg().defaultsTo("3000");
+        parser.accepts("server-host", "EchoServer hostname").withOptionalArg().defaultsTo("localhost");
+        parser.accepts("server-port", "EchoServer listening port").withOptionalArg().defaultsTo("8007");
 
         OptionSet opts = parser.parse(args);
         HttpcLibrary httpcLibrary = new HttpcLibrary();
@@ -74,7 +81,27 @@ public class httpc {
                 }
             }
 
-            output = httpcLibrary.sendRequest(method, URL, file, data, headers, verbose, redirect);
+            // Router address
+            String routerHost = (String) opts.valueOf("router-host");
+            int routerPort = Integer.parseInt((String) opts.valueOf("router-port"));
+
+            // Server address
+            String serverHost = (String) opts.valueOf("server-host");
+            int serverPort = Integer.parseInt((String) opts.valueOf("server-port"));
+
+            SocketAddress routerAddress = new InetSocketAddress(routerHost, routerPort);
+            InetSocketAddress serverAddress = new InetSocketAddress(serverHost, serverPort);
+
+            String response="";
+
+            try {
+                response = httpcLibrary.sendRequest(method, URL, file, data, headers, verbose, redirect, routerAddress, serverAddress);
+
+            }catch (Exception e){
+                System.out.println("There was an calling run client");
+            }
+
+
 
             Writer writer = null;
 
